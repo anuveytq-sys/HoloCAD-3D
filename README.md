@@ -41,7 +41,17 @@ Phase 01 established the workspace and illustrative assemblies, Phase 02 added o
 
 > **Measurement accuracy:** these are measurements of illustrative procedural geometry, not validated manufacturing CAD. The default calibration is 100 mm per scene unit only as an illustrative starting point. Set calibration against a known reference before interpreting dimensions. Bounding-sphere radius/diameter describe the selected mesh's bounding sphere, not necessarily a real part's engineering radius.
 
-### Phase 04 — expanded engineering libraries\n- **60 machine assemblies:** retains the original five and adds 55 additional illustrative procedural machine assemblies across powertrain, transmission, fluid systems, energy, robotics, automation, thermal and vehicle systems.\n- **60 reusable component types:** searchable catalog covering transmission, supports, fasteners, motion, fluid power, thermal, energy, electrical, vehicle, robotics, precision and structural components.\n- **Add components to the active assembly:** choose a component, review its category and purpose, then add it to the current scene as selectable geometry.\n- **Existing tools work with the expanded library:** component inspector, gesture control, measurements, unit calibration, annotations, exploded view, hide/isolate/show-all, orbit/pan/zoom, and responsive UI remain available.\n- **Engineering metadata:** each catalog item has a category, explanatory description, illustrative material/type, and selectable geometry.\n\n> Phase 04 is a learning and exploration library. Generated machine/component geometry and material descriptions are illustrative, not validated manufacturing drawings or engineering specifications.\n\n## Run locally
+### Phase 04 — expanded engineering libraries
+
+- **61 machine assemblies:** the original five, 55 additional machine concepts, and a dedicated jet engine model. Machine families now use different semantic layouts, including jet-engine intake/fan/compressor/combustor/turbine/exhaust stages, electric machines, pumps/compressors, conveyors, CNC equipment, robots, presses, turbines and vehicle mechanisms.
+- **60 reusable component types:** name-aware geometry adds distinctive details such as gear teeth, bearing races and rolling elements, threaded fasteners, piston rings, shaft journals, spring coils, valve stems, impeller/fan blades, flanges, cooling fins, pulley/sprocket teeth, robot joints, brake vents and battery cells where applicable.
+- **Machine management:** search, load and remove assemblies from the bottom of the Inspector while preserving the machine library.
+- **Compatible component workflow:** choose an existing host part to filter component choices by supported interface rules before adding a reusable component. Added parts record their host and illustrative mating interface.
+- **Existing tools remain available:** gesture and mouse/touch controls, inspection, measurements, calibration, annotations, exploded view, visibility/isolation, orbit/pan/zoom and responsive UI.
+
+> **Engineering accuracy note:** the models are more differentiated procedural learning visualizations, not exact replicas or certified CAD. Mating checks are heuristic compatibility rules and do not solve full CAD constraints, tolerances, clearances, fastener sizing, wiring or fluid routing. Dimensions, materials and connections require engineering validation before real-world use.
+ 
+## Run locally
 Serve the folder over HTTP (ES modules and camera access may not work from a local file URL). For example, run Python's built-in HTTP server on port 8000 and open localhost:8000. Allow camera permission when enabling hand controls.
 
 ## GitHub Pages
