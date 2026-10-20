@@ -45,6 +45,38 @@ html,body{width:100%;height:100%;overflow:hidden}
   .right{position:relative;inset:auto;width:auto;min-width:0;max-width:none;transform:none;display:flex;flex-direction:column;box-shadow:none}
   .right>.scroll{flex:1 1 auto;min-height:0;max-height:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}
 }
+
+/* Final inspector layout fix: pin the inspector to the workspace's right edge.
+   The matching grid track stays reserved so the workshop never sits underneath it. */
+@media (min-width:781px){
+  .layout{grid-template-columns:210px minmax(0,1fr) 320px!important}
+  #inspector.right{
+    position:fixed!important;top:60px!important;right:0!important;bottom:27px!important;
+    left:auto!important;width:320px!important;min-width:0!important;max-width:320px!important;
+    height:auto!important;z-index:6!important;transform:none!important;
+    visibility:visible!important;opacity:1!important;display:flex!important;
+    flex-direction:column!important;overflow:hidden!important;
+    border:0!important;border-left:1px solid var(--line)!important;border-radius:0!important;
+    box-shadow:none!important;background:#0a121d!important;
+  }
+  #inspector.right>.scroll{flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain}
+}
+@media (min-width:601px) and (max-width:780px){
+  .layout{grid-template-columns:minmax(0,1fr) minmax(245px,38vw)!important}
+  .layout>.side:first-child{display:none!important}
+  .center{grid-column:1!important;grid-row:auto!important;min-width:0!important}
+  #inspector.right{
+    position:fixed!important;top:54px!important;right:0!important;bottom:25px!important;
+    left:auto!important;width:min(38vw,320px)!important;min-width:245px!important;max-width:320px!important;
+    height:auto!important;z-index:6!important;transform:none!important;
+    visibility:visible!important;opacity:1!important;display:flex!important;
+    flex-direction:column!important;overflow:hidden!important;
+    border:0!important;border-left:1px solid var(--line)!important;border-radius:0!important;
+    box-shadow:none!important;background:#0a121d!important;
+  }
+  #inspector.right>.scroll{flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain}
+}
+
 </style></head><body><div class="app">
 <header><div class="brand"><div class="mark">⌬</div><div><div class="brandname">HOLOCAD</div><div class="sub">ENGINEERING STUDIO · PHASE 04</div></div></div><div class="crumb"><span class="live"></span> WORKSPACE / <b id="crumbtitle">4-Cylinder Engine</b></div><div class="topright"><div class="pill"><span class="live"></span> STUDIO READY</div><button class="btn" id="gestureBtn" title="Enable camera hand controls" aria-pressed="false">✋ Gestures</button><button class="btn" id="toggleInspector" title="Toggle inspector">▤</button><button class="btn" id="settingsBtn">⚙ Settings</button><button class="btn primary" id="saveBtn">Save View ↗</button></div></header>
 <main class="layout"><aside class="side"><div class="sidehead">MODEL LIBRARY <span class="count" id="modelCount">60 MODELS</span></div><div class="searchwrap"><input class="search" id="search" placeholder="⌕ Search assemblies..." aria-label="Search assemblies"></div><div class="label">MACHINE LIBRARY · 60 ASSEMBLIES</div><div class="list" id="models"><button class="item sel" data-model="engine"><span class="ico">⚙</span><span><div class="iname">4-Cylinder Engine</div><div class="isub">POWERTRAIN / 001</div></span><span class="arr">›</span></button><button class="item" data-model="gearbox"><span class="ico">◉</span><span><div class="iname">Gearbox Assembly</div><div class="isub">TRANSMISSION / 002</div></span><span class="arr">›</span></button><button class="item" data-model="turbine"><span class="ico">✳</span><span><div class="iname">Turbine Rotor</div><div class="isub">ENERGY / 003</div></span><span class="arr">›</span></button><button class="item" data-model="pump"><span class="ico">⟳</span><span><div class="iname">Centrifugal Pump</div><div class="isub">FLUID SYSTEMS / 004</div></span><span class="arr">›</span></button><button class="item" data-model="robot"><span class="ico">⌘</span><span><div class="iname">Robotic Joint</div><div class="isub">ROBOTICS / 005</div></span><span class="arr">›</span></button></div><div class="label">WORKSPACE</div><div class="list"><button class="item" id="newWorkspace"><span class="ico">＋</span><span><div class="iname">New study</div><div class="isub">RESET DEFAULT SCENE</div></span></button><button class="item" id="resetSide"><span class="ico">↺</span><span><div class="iname">Reset viewport</div><div class="isub">RESTORE CAMERA & PARTS</div></span></button></div><div class="sidefoot">PHASE 04 · DESIGN LIBRARIES + GESTURES<br>Illustrative geometry, not manufacturing-grade CAD.</div></aside>
