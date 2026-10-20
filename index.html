@@ -174,7 +174,7 @@ function addPhase4Component(){
  else if(size.y>=size.x){pos.y=bounds.max.y+.05;}
  else{pos.x=bounds.max.x+.04;}
  const i=parts.length,o=phase4AddShape(d,pos.toArray(),i,1);o.userData.basePosition=o.position.clone();o.userData.attachedTo=host.userData.partName;o.userData.matingInterface=mating;o.userData.attachmentHost=host;
- $('#partCount').textContent=parts.length;select(o);$('#inspector').classList.add('open');renderPhase4HostOptions();$('#phase4MachineStatus').textContent='Component attached: '+d.name+' → '+host.userData.partName+' ('+mating+').';
+ $('#partCount').textContent=parts.length;select(o);$('#inspector').classList.add('open');renderPhase4HostOptions();$('#phase4CompatibilityStatus').textContent='Attached: '+d.name+' → '+host.userData.partName+' ('+mating+').';
  toast(d.name+' attached to '+host.userData.partName);
 }
 
