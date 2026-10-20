@@ -1,6 +1,8 @@
 # HOLOCAD — Engineering Studio
 
-HoloCAD is a browser-based interactive 3D engineering exploration prototype. Phase 01 established the workspace and illustrative assemblies, Phase 02 added optional camera-based hand gesture controls, and **Phase 03 adds engineering measurements, annotations, and animated assembly tools**.
+HoloCAD is a browser-based interactive 3D engineering exploration prototype.
+https://anuveytq-sys.github.io/HoloCAD-3D/?utm_source=chatgpt.com
+Phase 01 established the workspace and illustrative assemblies, Phase 02 added optional camera-based hand gesture controls, and **Phase 03 adds engineering measurements, annotations, and animated assembly tools**.
 
 ## Included
 
