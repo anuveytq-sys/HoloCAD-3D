@@ -40,7 +40,7 @@ HoloCAD is a browser-based interactive 3D engineering exploration prototype. Pha
 
 > **Measurement accuracy:** these are measurements of illustrative procedural geometry, not validated manufacturing CAD. The default calibration is 100 mm per scene unit only as an illustrative starting point. Set calibration against a known reference before interpreting dimensions. Bounding-sphere radius/diameter describe the selected mesh's bounding sphere, not necessarily a real part's engineering radius.
 
-## Run locally
+### Phase 04 — expanded engineering libraries\n- **60 machine assemblies:** retains the original five and adds 55 additional illustrative procedural machine assemblies across powertrain, transmission, fluid systems, energy, robotics, automation, thermal and vehicle systems.\n- **60 reusable component types:** searchable catalog covering transmission, supports, fasteners, motion, fluid power, thermal, energy, electrical, vehicle, robotics, precision and structural components.\n- **Add components to the active assembly:** choose a component, review its category and purpose, then add it to the current scene as selectable geometry.\n- **Existing tools work with the expanded library:** component inspector, gesture control, measurements, unit calibration, annotations, exploded view, hide/isolate/show-all, orbit/pan/zoom, and responsive UI remain available.\n- **Engineering metadata:** each catalog item has a category, explanatory description, illustrative material/type, and selectable geometry.\n\n> Phase 04 is a learning and exploration library. Generated machine/component geometry and material descriptions are illustrative, not validated manufacturing drawings or engineering specifications.\n\n## Run locally
 Serve the folder over HTTP (ES modules and camera access may not work from a local file URL). For example, run Python's built-in HTTP server on port 8000 and open localhost:8000. Allow camera permission when enabling hand controls.
 
 ## GitHub Pages
@@ -49,5 +49,5 @@ In repository **Settings → Pages**, choose **GitHub Actions** as the publishin
 ## Known limitations / next phases
 - Geometry is illustrative, not manufacturing-grade CAD; dimensions and materials are not validated engineering specifications.
 - Gesture recognition may vary with lighting, camera angle, hand visibility, and device performance. Use the manual controls as a fallback.
-- A larger 50+ assembly/component library and optional AI-powered engineering explanations remain future phases.
+- Optional AI-powered engineering explanations remain a future phase.
 - Three.js, MediaPipe, the hand model, and fonts are loaded from public CDNs. Do not put private API keys in the frontend.
