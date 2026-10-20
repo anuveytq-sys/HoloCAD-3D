@@ -5,7 +5,9 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+# The deploy action reads the uploaded Pages artifact through the Actions API.
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -17,6 +19,11 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
