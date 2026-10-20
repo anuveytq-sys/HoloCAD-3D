@@ -435,4 +435,5 @@ function gestureFrame(now){requestAnimationFrame(gestureFrame);if(!gestureActive
 requestAnimationFrame(gestureFrame);
 
 phase4RegisterLibraries();load('engine');resize();let last=performance.now(),frames=0;function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,Math.max(0,(now-last)/1000));if(explodeDirection!==0){explodeProgress=THREE.MathUtils.clamp(explodeProgress+dt*1.35*explodeDirection,0,1);if(explodeDirection>0&&explodeProgress>=explodeTarget||explodeDirection<0&&explodeProgress<=explodeTarget){explodeProgress=explodeTarget;explodeDirection=0;setExplodeStatus(explodeProgress>=.999?'Exploded view · complete':explodeProgress<=.001?'Assembly view · complete':'Paused at '+Math.round(explodeProgress*100)+'% separation')}applyExplodePositions()}controls.update();renderer.render(scene,camera);updateAnnotationPositions();frames++;if(now-last>1000){$('#fps').textContent=Math.round(frames*1000/(now-last))+' FPS';frames=0;last=now}}requestAnimationFrame(animate);
-</script></body></html>
+</script><script src="./phase5.js" defer></script>
+</body></html>
