@@ -11,6 +11,24 @@
 .phase3-card .cardbody{padding:10px}.phase3-section{padding:8px 0;border-bottom:1px solid #1e2d3d}.phase3-section:last-child{border-bottom:0}.phase3-heading{font:9px 'DM Mono',monospace;letter-spacing:.1em;color:var(--cyan);margin-bottom:7px}.phase3-buttons{display:grid;grid-template-columns:1fr 1fr;gap:5px}.phase3-buttons .btn{font-size:9px;padding:8px 4px}.phase3-field{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:9px;color:#91a6bc}.phase3-field input,.phase3-field select{min-width:0;width:100%;padding:7px;background:#0a1420;color:var(--text);border:1px solid #2a4055;border-radius:5px;font-size:10px}.phase3-field input[type=range]{padding:0;accent-color:var(--cyan)}.phase3-output{font:9px/1.7 'DM Mono',monospace;color:#c5d6e4;white-space:pre-wrap;overflow-wrap:anywhere;max-height:140px;overflow:auto}.phase3-output .muted{color:#8196ab}.annotation-label{position:absolute;z-index:2;transform:translate(8px,-50%);max-width:180px;padding:5px 7px;border:1px solid #61e3e7;background:#07141de8;border-radius:5px;color:#e6eff8;font:9px/1.4 'DM Mono',monospace;pointer-events:none;box-shadow:0 3px 12px #0006}.annotation-label:before{content:'◆ ';color:var(--cyan)}
 @media(max-width:780px){.phase3-buttons .btn{padding:7px 3px}.annotation-label{max-width:125px;font-size:8px}}
 @media(max-width:780px){.gesture-status{right:8px;bottom:54px;max-width:68%;font-size:8px}}
+
+/* Responsive workspace containment: keep the inspector beside the workshop
+   on desktop, and make only the inspector contents scrollable. */
+html,body{width:100%;height:100%;overflow:hidden}
+.app{height:100dvh;min-height:0;overflow:hidden}
+.layout{height:100%;min-height:0;overflow:hidden;grid-template-columns:210px minmax(0,1fr) 320px}
+.center{min-width:0;min-height:0;overflow:hidden}
+.right{min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.right>.scroll{flex:1 1 auto;min-height:0;max-height:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+@media(max-width:1020px) and (min-width:781px){
+  .layout{grid-template-columns:180px minmax(0,1fr) 285px}
+}
+@media(max-width:780px){
+  .app{min-height:0}
+  .layout{height:100%;min-height:0;overflow:hidden;grid-template-columns:minmax(0,1fr)}
+  .right{min-height:0}
+  .right>.scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+}
 </style></head><body><div class="app">
 <header><div class="brand"><div class="mark">⌬</div><div><div class="brandname">HOLOCAD</div><div class="sub">ENGINEERING STUDIO · PHASE 04</div></div></div><div class="crumb"><span class="live"></span> WORKSPACE / <b id="crumbtitle">4-Cylinder Engine</b></div><div class="topright"><div class="pill"><span class="live"></span> STUDIO READY</div><button class="btn" id="gestureBtn" title="Enable camera hand controls" aria-pressed="false">✋ Gestures</button><button class="btn" id="toggleInspector" title="Toggle inspector">▤</button><button class="btn" id="settingsBtn">⚙ Settings</button><button class="btn primary" id="saveBtn">Save View ↗</button></div></header>
 <main class="layout"><aside class="side"><div class="sidehead">MODEL LIBRARY <span class="count" id="modelCount">60 MODELS</span></div><div class="searchwrap"><input class="search" id="search" placeholder="⌕ Search assemblies..." aria-label="Search assemblies"></div><div class="label">MACHINE LIBRARY · 60 ASSEMBLIES</div><div class="list" id="models"><button class="item sel" data-model="engine"><span class="ico">⚙</span><span><div class="iname">4-Cylinder Engine</div><div class="isub">POWERTRAIN / 001</div></span><span class="arr">›</span></button><button class="item" data-model="gearbox"><span class="ico">◉</span><span><div class="iname">Gearbox Assembly</div><div class="isub">TRANSMISSION / 002</div></span><span class="arr">›</span></button><button class="item" data-model="turbine"><span class="ico">✳</span><span><div class="iname">Turbine Rotor</div><div class="isub">ENERGY / 003</div></span><span class="arr">›</span></button><button class="item" data-model="pump"><span class="ico">⟳</span><span><div class="iname">Centrifugal Pump</div><div class="isub">FLUID SYSTEMS / 004</div></span><span class="arr">›</span></button><button class="item" data-model="robot"><span class="ico">⌘</span><span><div class="iname">Robotic Joint</div><div class="isub">ROBOTICS / 005</div></span><span class="arr">›</span></button></div><div class="label">WORKSPACE</div><div class="list"><button class="item" id="newWorkspace"><span class="ico">＋</span><span><div class="iname">New study</div><div class="isub">RESET DEFAULT SCENE</div></span></button><button class="item" id="resetSide"><span class="ico">↺</span><span><div class="iname">Reset viewport</div><div class="isub">RESTORE CAMERA & PARTS</div></span></button></div><div class="sidefoot">PHASE 04 · DESIGN LIBRARIES + GESTURES<br>Illustrative geometry, not manufacturing-grade CAD.</div></aside>
