@@ -34,6 +34,19 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Validate static entry point
         run: test -s index.html
+      - name: Validate inline module JavaScript syntax
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          marker = '<script type="module">'
+          start = html.rfind(marker)
+          end = html.find('</script>', start + len(marker))
+          if start < 0 or end < 0:
+              raise SystemExit("Could not locate the inline JavaScript module in index.html")
+          Path("/tmp/holocad-module.mjs").write_text(html[start + len(marker):end], encoding="utf-8")
+          PY
+          node --check /tmp/holocad-module.mjs
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
