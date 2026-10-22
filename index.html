@@ -436,6 +436,13 @@ function moveGesturePartDrag(p){
  if(ray.ray.intersectPlane(gesturePartDrag.plane,worldPoint)){
   root.updateWorldMatrix(true,false);
   gesturePartDrag.object.position.copy(root.worldToLocal(worldPoint));
+  // Keep the dragged location stable when the explode animation updates parts.
+  const partIndex=parts.indexOf(gesturePartDrag.object);
+  const base=gesturePartDrag.object.userData.basePosition;
+  if(base){
+   base.copy(gesturePartDrag.object.position);
+   if(explodeProgress>0&&partIndex>=0)base.addScaledVector(explodeOffset(gesturePartDrag.object,partIndex),-explodeProgress);
+  }
   gesturePartDrag.object.updateMatrixWorld(true);
  }
  return true;
