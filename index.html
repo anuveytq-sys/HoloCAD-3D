@@ -414,6 +414,32 @@ function gestureIsOpen(lm){return [8,12,16,20].every((t,i)=>gestureFingerUp(lm,t
 function gestureIsFist(lm){return [8,12,16,20].every((t,i)=>lm[t].y>lm[[6,10,14,18][i]].y-.005);}
 function gestureCircularSweep(p){gestureTrail.push({x:p.x,y:p.y});if(gestureTrail.length>22)gestureTrail.shift();if(gestureTrail.length<10)return 0;const cx=gestureTrail.reduce((s,v)=>s+v.x,0)/gestureTrail.length,cy=gestureTrail.reduce((s,v)=>s+v.y,0)/gestureTrail.length;const radii=gestureTrail.map(v=>Math.hypot(v.x-cx,v.y-cy));const mean=radii.reduce((s,v)=>s+v,0)/radii.length;if(mean<.035||mean>.19)return 0;const variance=radii.reduce((s,v)=>s+(v-mean)*(v-mean),0)/radii.length;if(Math.sqrt(variance)/mean>.48)return 0;let sweep=0;for(let i=1;i<gestureTrail.length;i++){const a=Math.atan2(gestureTrail[i-1].y-cy,gestureTrail[i-1].x-cx),b=Math.atan2(gestureTrail[i].y-cy,gestureTrail[i].x-cx);let d=b-a;while(d>Math.PI)d-=Math.PI*2;while(d< -Math.PI)d+=Math.PI*2;sweep+=d}return Math.abs(sweep)>1.9?sweep:0;}
 function gestureRaySelect(nx,ny){const rect=canvas.getBoundingClientRect();pt.set(nx*2-1,-ny*2+1);ray.setFromCamera(pt,camera);const hits=ray.intersectObjects(parts.filter(p=>p.visible),false);if(hits.length){select(hits[0].object);$('#inspector').classList.add('open');return hits[0].object}return null;}
+/* Pinch-drag a component out of its assembly for closer inspection.
+   Movement is limited to a camera-facing plane, so existing orbit/scale
+   gestures remain unchanged unless a pinch begins directly on a part. */
+let gesturePartDrag=null;
+function beginGesturePartDrag(object,p){
+ if(!object)return null;
+ object.updateWorldMatrix(true,false);root.updateWorldMatrix(true,false);
+ const worldPosition=new THREE.Vector3();object.getWorldPosition(worldPosition);
+ const normal=new THREE.Vector3();camera.getWorldDirection(normal);
+ const plane=new THREE.Plane().setFromNormalAndCoplanarPoint(normal,worldPosition);
+ return {object,startX:p.x,startY:p.y,origin:object.position.clone(),plane,moved:false};
+}
+function moveGesturePartDrag(p){
+ if(!gesturePartDrag)return false;
+ const d=Math.hypot(p.x-gesturePartDrag.startX,p.y-gesturePartDrag.startY);
+ if(!gesturePartDrag.moved&&d<.018)return false;
+ gesturePartDrag.moved=true;
+ pt.set(p.x*2-1,-p.y*2+1);ray.setFromCamera(pt,camera);
+ const worldPoint=new THREE.Vector3();
+ if(ray.ray.intersectPlane(gesturePartDrag.plane,worldPoint)){
+  root.updateWorldMatrix(true,false);
+  gesturePartDrag.object.position.copy(root.worldToLocal(worldPoint));
+  gesturePartDrag.object.updateMatrixWorld(true);
+ }
+ return true;
+}
 function smoothWorkspaceGesture(p,now=performance.now()){if(workspaceGestureX===null||workspaceGestureY===null){workspaceGestureX=p.x;workspaceGestureY=p.y;lastWorkspaceSmoothAt=now;return{x:workspaceGestureX,y:workspaceGestureY}}const dx=p.x-workspaceGestureX,dy=p.y-workspaceGestureY,d=Math.hypot(dx,dy),dt=Math.max(.016,Math.min(.12,(now-(lastWorkspaceSmoothAt||now-65))/1000));lastWorkspaceSmoothAt=now;if(d<.0012)return{x:workspaceGestureX,y:workspaceGestureY};const speed=d/dt,tau=speed>.9?.075:speed>.35?.105:.15,alpha=1-Math.exp(-dt/tau);workspaceGestureX+=dx*alpha;workspaceGestureY+=dy*alpha;return{x:workspaceGestureX,y:workspaceGestureY}}
 function resetWorkspaceGestureSmoothing(){workspaceGestureX=null;workspaceGestureY=null;workspaceScaleFiltered=null;lastWorkspaceSmoothAt=0}
 function gestureOrbitBy(dx,dy){const offset=camera.position.clone().sub(controls.target);const spherical=new THREE.Spherical().setFromVector3(offset);spherical.theta-=dx*3.2;spherical.phi=Math.max(.18,Math.min(Math.PI-.18,spherical.phi+dy*2.5));camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(spherical));camera.lookAt(controls.target);controls.update();}
@@ -446,7 +472,7 @@ if(open&&!pinch){if(inspectorGestureLastY!==null){const dy=(p.y-inspectorGesture
 if(pinch){if(!lastPinch){const target=hit.element&&hit.element.closest('#inspector input, #inspector select, #inspector button, #inspector [role="button"], #inspector a');inspectorGestureCapture=target||null;setInspectorGestureTarget(target);if(target){if(target.matches('input[type="range"]'))updateGestureRange(target,hit.x);else if(target.matches('select')){target.focus();inspectorGestureSelectAnchorX=p.x;inspectorGestureHoldTarget=target;inspectorGestureHoldSince=now;inspectorGestureHoldFired=false}else if(target.matches('input[type="checkbox"],input[type="radio"],button,[role="button"],a')){target.click()}else{target.focus();if(target.matches('input[type="number"],input[type="text"],input:not([type])'))target.click()} } }else if(inspectorGestureCapture&&inspectorGestureCapture.matches('input[type="range"]'))updateGestureRange(inspectorGestureCapture,hit.x);else if(inspectorGestureCapture&&inspectorGestureCapture.matches('select')&&inspectorGestureSelectAnchorX!==null&&Math.abs(p.x-inspectorGestureSelectAnchorX)>.035){const sel=inspectorGestureCapture,delta=p.x-inspectorGestureSelectAnchorX;gestureCycleSelect(sel,delta>0?1:-1);inspectorGestureSelectAnchorX=p.x;}inspectorGestureLastX=p.x;inspectorGestureLastY=p.y;setGestureStatus('PINCH','Inspector mode: pinch a button to activate it; pinch-drag a slider to adjust it.');return true}
 if(point){const target=hit.element&&hit.element.closest('#inspector input, #inspector select, #inspector button, #inspector [role="button"], #inspector a');const key=target;setInspectorGestureTarget(target);if(key!==inspectorGestureHoldTarget){inspectorGestureHoldTarget=key;inspectorGestureHoldSince=now;inspectorGestureHoldFired=false}if(target&&now-inspectorGestureHoldSince>650&&!inspectorGestureHoldFired){inspectorGestureHoldFired=true;if(target.matches('input[type="range"]'))updateGestureRange(target,hit.x);else if(target.matches('select'))gestureCycleSelect(target,1);else target.click();if(!target.matches('select'))toast('Inspector control activated')}if(target&&target.matches('input[type="range"]')&&inspectorGestureHoldFired)updateGestureRange(target,hit.x);inspectorGestureLastX=p.x;inspectorGestureLastY=p.y;setGestureStatus('POINT','Inspector mode: point at a control and hold briefly to activate it.');return true}
 inspectorGestureLastX=p.x;inspectorGestureLastY=p.y;return inside}
-function processGestureFrame(result,now){const hands=result.landmarks||[];if(!hands.length){smoothGestureX=null;smoothGestureY=null;lastGestureCursorAt=0;resetWorkspaceGestureSmoothing();lastHandPoint=null;lastPinch=false;pointSince=0;lastPointKey='';twoHandDistance=0;gestureCursor.classList.remove('active','pinching');$('#inspector').classList.remove('gesture-target');inspectorGestureCapture=null;inspectorGestureLastY=null;inspectorGestureLastX=null;inspectorGestureHoldTarget=null;setGestureStatus('READY');return}gestureCursor.classList.add('active');const vp=viewport.getBoundingClientRect();if(hands.length>=2){$('#inspector').classList.remove('gesture-target');inspectorGestureCapture=null;const a=gesturePoint(hands[0]),b=gesturePoint(hands[1]);const center={x:(a.x+b.x)/2,y:(a.y+b.y)/2};updateGestureCursor(center.x*window.innerWidth,center.y*window.innerHeight,false);const rawScaleDistance=gestureDistance({x:hands[0][0].x,y:hands[0][0].y},{x:hands[1][0].x,y:hands[1][0].y});workspaceScaleFiltered=workspaceScaleFiltered===null?rawScaleDistance:THREE.MathUtils.lerp(workspaceScaleFiltered,rawScaleDistance,.14);gestureScaleBy(workspaceScaleFiltered);lastHandPoint=null;lastPinch=false;pointSince=0;lastPointKey='';setGestureStatus('SCALE');return}
+function processGestureFrame(result,now){const hands=result.landmarks||[];if(!hands.length){gesturePartDrag=null;smoothGestureX=null;smoothGestureY=null;lastGestureCursorAt=0;resetWorkspaceGestureSmoothing();lastHandPoint=null;lastPinch=false;pointSince=0;lastPointKey='';twoHandDistance=0;gestureCursor.classList.remove('active','pinching');$('#inspector').classList.remove('gesture-target');inspectorGestureCapture=null;inspectorGestureLastY=null;inspectorGestureLastX=null;inspectorGestureHoldTarget=null;setGestureStatus('READY');return}gestureCursor.classList.add('active');const vp=viewport.getBoundingClientRect();if(hands.length>=2){$('#inspector').classList.remove('gesture-target');inspectorGestureCapture=null;const a=gesturePoint(hands[0]),b=gesturePoint(hands[1]);const center={x:(a.x+b.x)/2,y:(a.y+b.y)/2};updateGestureCursor(center.x*window.innerWidth,center.y*window.innerHeight,false);const rawScaleDistance=gestureDistance({x:hands[0][0].x,y:hands[0][0].y},{x:hands[1][0].x,y:hands[1][0].y});workspaceScaleFiltered=workspaceScaleFiltered===null?rawScaleDistance:THREE.MathUtils.lerp(workspaceScaleFiltered,rawScaleDistance,.14);gestureScaleBy(workspaceScaleFiltered);lastHandPoint=null;lastPinch=false;pointSince=0;lastPointKey='';setGestureStatus('SCALE');return}
 const lm=hands[0],p=gesturePoint(lm),thumb=lm[4],index=lm[8],pinch=gestureDistance({x:thumb.x,y:thumb.y},{x:index.x,y:index.y})<.055,open=gestureIsOpen(lm),point=gestureIsPoint(lm),fist=gestureIsFist(lm);if(!open)gestureTrail=[];updateGestureCursor(p.x*window.innerWidth,p.y*window.innerHeight,pinch);
 // Targeted toolbar support: a fresh pinch over Explode/Wireframe activates the
 // existing button handler. Keep this isolated from the model/inspector gestures.
@@ -456,8 +482,22 @@ if(pinch&&gestureToolbarTarget){
  lastPinch=true;lastHandPoint=p;pointSince=0;lastPointKey='';lastPointFired=false;twoHandDistance=0;return;
 }
 const inspectorPoint={x:smoothGestureX/window.innerWidth,y:smoothGestureY/window.innerHeight};const overInspector=handleInspectorGesture(inspectorPoint,now,{pinch,open,point});if(overInspector){lastPinch=pinch;lastHandPoint=p;pointSince=0;lastPointKey='';lastPointFired=false;twoHandDistance=0;return}$('#inspector').classList.remove('gesture-target');inspectorGestureCapture=null;const wp=smoothWorkspaceGesture(p,now);
-if(pinch){setGestureStatus('PINCH');if(!lastPinch)gestureRaySelect(wp.x,wp.y);if(lastHandPoint)gestureOrbitBy(wp.x-lastHandPoint.x,wp.y-lastHandPoint.y);lastPinch=true;lastHandPoint=wp;pointSince=0;lastPointKey='';lastPointFired=false;return}
-lastPinch=false;twoHandDistance=0;
+if(pinch){
+ setGestureStatus('PINCH');
+ if(!lastPinch){
+  const picked=gestureRaySelect(wp.x,wp.y);
+  gesturePartDrag=picked?beginGesturePartDrag(picked,wp):null;
+ }
+ if(gesturePartDrag){
+  const dragging=moveGesturePartDrag(wp);
+  if(dragging)setGestureStatus('PINCH','Moving component out of the assembly — release pinch to inspect it.');
+ }else if(lastHandPoint){
+  gestureOrbitBy(wp.x-lastHandPoint.x,wp.y-lastHandPoint.y);
+ }
+ lastPinch=true;lastHandPoint=wp;pointSince=0;lastPointKey='';lastPointFired=false;return
+}
+if(lastPinch&&gesturePartDrag&&gesturePartDrag.moved)toast('Component separated for closer inspection');
+gesturePartDrag=null;lastPinch=false;twoHandDistance=0;
 if(open){const sweep=gestureCircularSweep(wp);if(sweep){gestureRotationPending+=sweep*.72;gestureTrail=[];setGestureStatus('CIRCLE','Circular hand motion detected — assembly rotated.');lastHandPoint=wp;pointSince=0;lastPointKey='';lastPointFired=false;toast('Circular gesture: assembly rotated');return}setGestureStatus('ORBIT');if(lastHandPoint)gestureOrbitBy((wp.x-lastHandPoint.x)*.82,(wp.y-lastHandPoint.y)*.82);lastHandPoint=wp;pointSince=0;lastPointKey='';lastPointFired=false;return}
 if(point){const key=Math.round(wp.x*20)+':'+Math.round(wp.y*20);setGestureStatus('POINT');if(key!==lastPointKey){lastPointKey=key;pointSince=now;lastPointFired=false}if(!pointSince)pointSince=now;if(now-pointSince>650&&!lastPointFired){gestureRaySelect(wp.x,wp.y);lastPointFired=true;toast('Point-and-hold inspection')}lastHandPoint=wp;return}
 if(fist){setGestureStatus('ROTATE');if(lastHandPoint)gestureRotateBy(wp.x-lastHandPoint.x);lastHandPoint=wp;pointSince=0;lastPointKey='';return}
