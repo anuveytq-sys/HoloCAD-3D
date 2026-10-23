@@ -1,0 +1,24 @@
+{
+  "id": "./",
+  "name": "HOLOCAD",
+  "short_name": "HOLOCAD",
+  "description": "Installable HOLOCAD web app",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen"
+  ],
+  "orientation": "any",
+  "background_color": "#080e17",
+  "theme_color": "#080e17",
+  "icons": [
+    {
+      "src": "./icons/app.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
