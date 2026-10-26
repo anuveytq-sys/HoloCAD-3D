@@ -87,7 +87,7 @@ jobs:
           from pathlib import Path
           p = Path("index.html")
           html = p.read_text(encoding="utf-8")
-          tag = '<script src="./holocad-tracking-fix.js?v=20261026-1" defer></script>'
+          tag = '<script src="./holocad-tracking-fix.js?v=20261026-2" defer></script>'
           if tag not in html:
               marker = '</body>'
               if marker not in html:
