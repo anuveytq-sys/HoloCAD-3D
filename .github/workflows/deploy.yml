@@ -67,13 +67,42 @@ jobs:
               html = html.replace(marker, f'{tag}\n{marker}', 1)
               p.write_text(html, encoding="utf-8")
           PY
+      - name: Expose HoloCAD workshop root to the tracking bridge
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("index.html")
+          html = p.read_text(encoding="utf-8")
+          old_controls = "const controls=new OrbitControls(camera,renderer.domElement);"
+          new_controls = old_controls + "window.__holocadControls=controls;"
+          if old_controls in html and "window.__holocadControls=controls;" not in html:
+              html = html.replace(old_controls, new_controls, 1)
+          old_root = "const root=new THREE.Group();scene.add(root);"
+          new_root = old_root + "window.__holocadRoot=root;"
+          if old_root not in html:
+              raise SystemExit("Could not find the HoloCAD root declaration")
+          if "window.__holocadRoot=root;" not in html:
+              html = html.replace(old_root, new_root, 1)
+          p.write_text(html, encoding="utf-8")
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          marker = '<script type="module">'
+          start = html.rfind(marker)
+          end = html.find('</script>', start + len(marker))
+          if start < 0 or end < 0:
+              raise SystemExit("Could not locate the inline JavaScript module after bridge injection")
+          Path("/tmp/holocad-module-bridged.mjs").write_text(html[start + len(marker):end], encoding="utf-8")
+          PY
+          node --check /tmp/holocad-module-bridged.mjs
       - name: Inject head and eye tracking module into the Pages artifact
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path("index.html")
           html = p.read_text(encoding="utf-8")
-          tag = '<script src="./holocad-tracking.js?v=20261026-2" defer></script>'
+          tag = '<script src="./holocad-tracking.js?v=20261026-3" defer></script>'
           if tag not in html:
               marker = '</body>'
               if marker not in html:
@@ -81,13 +110,13 @@ jobs:
               html = html.replace(marker, f'{tag}\n{marker}', 1)
               p.write_text(html, encoding="utf-8")
           PY
-      - name: Inject tracking interaction compatibility module into the Pages artifact
+      - name: Inject tracking interaction module into the Pages artifact
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path("index.html")
           html = p.read_text(encoding="utf-8")
-          tag = '<script src="./holocad-tracking-fix.js?v=20261026-2" defer></script>'
+          tag = '<script src="./holocad-tracking-fix.js?v=20261026-3" defer></script>'
           if tag not in html:
               marker = '</body>'
               if marker not in html:
