@@ -51,6 +51,8 @@ jobs:
         run: node --check phase5.js
       - name: Validate head and eye tracking module
         run: node --check holocad-tracking.js
+      - name: Validate tracking interaction fix
+        run: node --check holocad-tracking-fix.js
       - name: Inject Phase 5 AI module into the Pages artifact
         run: |
           python3 - <<'PY'
@@ -71,7 +73,21 @@ jobs:
           from pathlib import Path
           p = Path("index.html")
           html = p.read_text(encoding="utf-8")
-          tag = '<script src="./holocad-tracking.js?v=20261026-1" defer></script>'
+          tag = '<script src="./holocad-tracking.js?v=20261026-2" defer></script>'
+          if tag not in html:
+              marker = '</body>'
+              if marker not in html:
+                  raise SystemExit("Could not find </body> in index.html")
+              html = html.replace(marker, f'{tag}\n{marker}', 1)
+              p.write_text(html, encoding="utf-8")
+          PY
+      - name: Inject tracking interaction compatibility module into the Pages artifact
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("index.html")
+          html = p.read_text(encoding="utf-8")
+          tag = '<script src="./holocad-tracking-fix.js?v=20261026-1" defer></script>'
           if tag not in html:
               marker = '</body>'
               if marker not in html:
