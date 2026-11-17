@@ -42,6 +42,13 @@ Phase 01 established the workspace and illustrative assemblies, Phase 02 added o
 > **Measurement accuracy:** these are measurements of illustrative procedural geometry, not validated manufacturing CAD. The default calibration is 100 mm per scene unit only as an illustrative starting point. Set calibration against a known reference before interpreting dimensions. Bounding-sphere radius/diameter describe the selected mesh's bounding sphere, not necessarily a real part's engineering radius.
 
 ### Phase 04 — expanded engineering libraries
+### Visual enhancement — realistic component finish
+
+- All 61 machine assemblies inherit a restrained per-component emissive finish, giving every visible part a subtle cool glow without obscuring its shape or labels.
+- Procedural component materials use physically based surfaces with metallic response, varied roughness, and a light clearcoat for more convincing machined-metal, alloy, and coated-part presentation.
+- Improved soft shadow filtering, higher-resolution key-light shadows, and complementary fill/rim lighting add depth and help separate adjacent components.
+- Existing model geometry, machine loading, selection, hand gestures, pinch-drag, Explode, Wireframe, measurements, annotations, visibility controls, and AI tools remain in place.
+
 
 - **61 machine assemblies:** the original five, 55 additional machine concepts, and a dedicated jet engine model. Machine families now use different semantic layouts, including jet-engine intake/fan/compressor/combustor/turbine/exhaust stages, electric machines, pumps/compressors, conveyors, CNC equipment, robots, presses, turbines and vehicle mechanisms.
 - **60 reusable component types:** name-aware geometry adds distinctive details such as gear teeth, bearing races and rolling elements, threaded fasteners, piston rings, shaft journals, spring coils, valve stems, impeller/fan blades, flanges, cooling fins, pulley/sprocket teeth, robot joints, brake vents and battery cells where applicable.
